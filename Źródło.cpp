@@ -47,6 +47,9 @@ int main(int argc, wchar_t* argsv[]) {
 		FILE* compiler = _popen(command.c_str(), "r");
 		if (compiler == NULL) {
 			cout << u8"Nieznany b³¹d kompilatora.";
+			string filecpp = file + ".cpp";
+			const char* fcpp = filecpp.c_str();
+			remove(fcpp);
 			return 0;
 		}
 		char buffer[1035];
@@ -58,23 +61,28 @@ int main(int argc, wchar_t* argsv[]) {
 		}
 		if (err == true) {
 			cout << u8"B³¹d kompilacji:\n" << error;
+			string filecpp = file + ".cpp";
+			const char* fcpp = filecpp.c_str();
+			remove(fcpp);
 			return 0;
 		}
 		command = k + " | " + file + ".exe 2>&1";
 		_pclose(compiler);
 		FILE* software = _popen(command.c_str(), "r");
 		char buffer2[1035];
-		err = false;
-		error = "";
-		while (fgets(buffer2, sizeof(buffer2), compiler) != NULL) {
-			err = true;
-			error += buffer2;
+		string out = "";
+		while (fgets(buffer2, sizeof(buffer2), software) != NULL) {
+			out += buffer2;
 		}
-		if (err == true) {
-			cout << u8"Wynik kompilatora:\n" << error;
-			return 0;
-		}
+		cout << u8"Wynik kompilatora:\n" << out;
 		_pclose(software);
+		string filecpp = file + ".cpp";
+		const char* fcpp = filecpp.c_str();
+		string fileexe = file + ".exe";
+		const char* fexe = fileexe.c_str();
+		remove(fcpp);
+		remove(fexe);
+
 
 	} else {
 		printf("Hello world");
