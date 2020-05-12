@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300&display=swap">
+        <style>
+            :root {
+                --bglight: #fff;
+                --bgdark: #000;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                font-family: "DM Mono", monospace;
+            }
+            #wrapper {
+                display: grid;
+                grid-template-rows: 100px auto 60px;
+                grid-template-columns: 80px auto auto;
+                grid-template-areas:
+                    "header header header"
+                    "menu input output"
+                    "footer footer footer";
+            }
+            #header {
+                grid-area: header;
+            }
+            #menu {
+                grid-area: menu;
+                display: flex;
+                flex-direction: column;
+            }
+            #input {
+                grid-area: input;
+                display: grid;
+                grid-template-rows: 60px auto;
+                grid-template-columns: auto;
+                grid-template-areas:
+                    "inputHeader"
+                    "inputWrapper";
+            }
+            #output {
+                grid-area: output;
+                grid-template-rows: 60px auto;
+                grid-template-columns: auto;
+                grid-template-areas:
+                    "outputHeader"
+                    "outputCode";
+            }
+            #footer {
+                grid-area: footer;
+                text-align: center;
+                font-size: 16px;
+                line-height: 30px;
+                margin-top: 10px;
+            }
+            .headerText {
+                font-size: 32px;
+                margin-left: 10px;
+                line-height: 100px;
+            }
+            .mode {
+                height: 40px;
+                width: 40px;
+                margin-top: 25px;
+                margin-left: auto;
+                margin-right: auto;
+                border-radius: 8px;
+            }
+            .mode:hover {
+                cursor: pointer;
+            }
+            .img {
+                height: 20px;
+                width: 20px;
+                padding: 10px;
+            }
+            .on {
+                background-color: #1e272e;
+                border: 1px solid #1a2227;
+            }
+            .off {
+                background-color: #ecedf0;
+                border: 1px solid #dcdde1;
+            }
+            #inputHeader {
+                display: flex;
+                flex-direction: row;
+            }
+            .inputText {
+                font-size: 16px;
+                line-height: 60px;
+                flex-grow: 1;
+                margin-left: 10px;
+            }
+            #run {
+                height: 40px;
+                width: 80px;
+                background-color: #3742fa;
+                border-radius: 8px;
+                border-style: none;
+                color: #fff;
+                font-size: 16px;
+                margin: 10px;
+            }
+            #run:hover {
+                cursor: pointer;
+            }
+            #inputWrapper {
+                display: flex;
+                flex-direction: column;
+            }
+            #inputCode {
+                height: 600px;
+            }
+            .stdin {
+                height: 60px;
+                font-size: 16px;
+                line-height: 60px;
+                margin-left: 10px;
+            }
+            #inputData {
+                height: 80px;
+            }
+            .outputText {
+                grid-area: outputHeader;
+                font-size: 16px;
+                line-height: 60px;
+                margin-left: 10px;
+            }
+            .outputCode {
+                grid-area: outputCode;
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body class="bg">
+        <div id="wrapper" class="bg">
+            <div id="header" class="bg">
+                <p class="headerText">Kompilator C++ Online</p>
+            </div>
+            <div id="menu" class="bg">
+                <div class="mode off" onclick="mode()">
+                    <img class="img" src="off.png">
+                </div>
+            </div>
+            <div id="input">
+                <div id="inputHeader" class="bg">
+                    <p class="inputText">input</p>
+                    <button id="run">Uruchom</button>
+                </div>
+                <div id="inputWrapper" class="bg">
+                    <textarea id="inputCode" class="bg"></textarea>
+                    <p class="stdin">stdin</p>
+                    <textarea id="inputData" class="bg"></textarea>
+                </div>
+            </div>
+            <div id="output" class="bg">
+                <p class="outputText">output</p>
+                <p class="outputCode">stdout</p>
+            </div>
+            <div id="footer" class="bg">&copy;Jakub Marciniak, Dawid Pieczyński</div>
+        </div>
+        <script>
+            function mode() {
+                var img = document.getElementsByClassName("img");
+                var mode = document.getElementsByClassName("mode");
+                if (mode[0].classList.contains("off")) {
+                    mode[0].classList.remove("off");
+                    mode[0].classList.toggle("on");
+                    img[0].src = "on.png";
+                } else {
+                    mode[0].classList.remove("on");
+                    mode[0].classList.toggle("off");
+                    img[0].src = "off.png";
+                }
+                var bg = document.getElementsByClassName("bg");
+                for (let i = 0; i < bg.length; i++) {
+                    if (mode[0].classList.contains("off")) {
+                        bg[i].style.background = "#fff";
+                        bg[i].style.color = "#000";
+                    } else {
+                        bg[i].style.background = "#000";
+                        bg[i].style.color = "#fff";
+                    }
+                }
+            }
+
+			run.addEventListener("click", () => {
+				var a = new XMLHttpRequest();
+				a.open("POST", "/XD.cgi", true);
+				a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				a.onreadystatechange = function() {
+					if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+						out.textContent = this.responseText;                 
+					}
+				}
+				b1 = new TextEncoder().encode(inputCode.value);
+				x = "";
+				b1.forEach((el) => x+=`${el} `);
+                a.send(`${x.trim()}|XD`);
+                b2 = new TextEncoder().encode(inputData.value);
+				x = "";
+				b2.forEach((el) => x+=`${el} `);
+				a.send(`${x.trim()}|XD`);
+            })
+            
+			function enableTab(id) {
+			var el = document.getElementById(id);
+			el.onkeydown = function(e) {
+			if (e.keyCode === 9) { // tab was pressed
+
+				// get caret position/selection
+				var val = this.value,
+					start = this.selectionStart,
+					end = this.selectionEnd;
+
+				// set textarea value to: text before caret + tab + text after caret
+				this.value = val.substring(0, start) + '\t' + val.substring(end);
+
+				// put caret at right position again
+				this.selectionStart = this.selectionEnd = start + 1;
+
+				// prevent the focus lose
+				return false;
+					}
+				};
+			}
+            enableTab("inputCode");
+            enableTab("inputData");
+    
+        </script>
+    </body>
+</html>
