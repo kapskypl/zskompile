@@ -1,0 +1,7 @@
+﻿  zskompile.cpp
+C:\Users\kvpsky\source\repos\zskompile\zskompile\zskompile.cpp(134,11): warning C4101: "buffer": lokalna zmienna, do której nie istnieje odwołanie
+  Trwa generowanie kodu
+  Previous IPDB not found, fall back to full compilation.
+  All 402 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Zakończono generowanie kodu
+  zskompile.vcxproj -> C:\Users\kvpsky\source\repos\zskompile\x64\Release\zskompile.cgi
