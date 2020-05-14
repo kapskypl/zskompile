@@ -61,7 +61,7 @@ void run(std::wstring command) {
 }
 
 std::wstring exe(zskompile zsk) {
-	DWORD d1 = GetTickCount();
+	unsigned __int64 d1 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	std::wostringstream woss;
 	std::string outname = zsk.getname() + ".out";
 	std::string exename = zsk.getname() + ".exe";
@@ -114,7 +114,8 @@ std::wstring exe(zskompile zsk) {
 	else {
 		std::wstringstream z;
 		std::wifstream oof2(outname.c_str());
-		z << L"0\n" << std::to_wstring(GetTickCount()-d1) << L"\n" << oof2.rdbuf();
+		unsigned __int64 d2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		z << L"0\n" << std::to_wstring(d2-d1) << L"\n" << oof2.rdbuf();
 		opt = z.str();
 		oof2.close();
 	}
