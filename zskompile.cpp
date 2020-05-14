@@ -26,7 +26,8 @@ std::string zskompile::getname() {
 }
 
 zskompile::zskompile(char* in) {
-	name = std::to_string(time(NULL));
+	unsigned __int64 now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	name = std::to_string(now);
 	char* next_temp;
 	char* temp = strtok_s(in, "|", &next_temp);
 	int i = 0;
@@ -55,28 +56,70 @@ bool isGET() {
 	}
 }
 
+void run(std::wstring command) {
+	_wpopen(command.c_str(), L"r");
+}
+
 std::wstring exe(zskompile zsk) {
 	std::wostringstream woss;
+	std::string outname = zsk.getname() + ".out";
 	std::string exename = zsk.getname() + ".exe";
-	woss << "(";
-	for (int i = 0; i < zsk.getinputs().size(); i++) {
-		if (i > 0) {
-			woss << " && ";
+	if (zsk.getinputs().size() > 0) {
+		woss << "(";
+		for (int i = 0; i < zsk.getinputs().size(); i++) {
+			if (i > 0) {
+				woss << " && ";
+			}
+			woss << "echo " << zsk.getinputs()[i];
 		}
-		woss << "echo " << zsk.getinputs()[i];
+		woss << ") | ";
 	}
-	woss << ") | ";
+	std::wstring outws(outname.begin(), outname.end());
 	std::wstring namews(exename.begin(), exename.end());
-	woss << namews << " 2>&1";
+	woss << namews << " >" << outws << " 2>&1";
 	std::wstring command = woss.str();
-	FILE* xe = _wpopen(command.c_str(), L"r");
-	wchar_t buffer[10000];
-	std::wstring output = L"";
-	while (fgetws(buffer, sizeof(buffer), xe) != NULL) {
-		output += buffer;
+	int n1 = time(NULL);
+	int n2 = time(NULL);
+	int completed = 0;
+	std::future<void> f = std::async(run, command);
+	while (n2 - n1 <= 10) {
+		std::string ifcmd = "tasklist /FI \"IMAGENAME eq " + exename + "\" | find /c /v \"\"";
+		FILE* ifrun = _popen(ifcmd.c_str(), "r");
+		char buffer[1035];
+		std::string ifout = "";
+		while (fgets(buffer, sizeof(buffer), ifrun) != NULL) {
+			ifout += buffer;
+		}
+		_pclose(ifrun);
+		if (ifout == "1\n") {
+			completed = 1;
+			break;
+		}
+		n2 = time(NULL);
 	}
+	if (completed == 0) {
+		std::string killcmd = "taskkill /F /IM " + exename;
+		system(killcmd.c_str());
+	}
+	std::wstring opt;
+	std::wifstream oof(outname.c_str(), std::ios::binary | std::ios::ate);
+	int file_size = oof.tellg();
+	oof.close();
+	if (file_size > 2097152) {
+		std::wostringstream wssss;
+		wssss << u8"1\nOdpowiedŸ za du¿a na wys³anie (" << std::to_wstring(file_size) << L"B)";
+		opt = wssss.str();
+	}
+	else {
+		std::wstringstream z;
+		std::wifstream oof2(outname.c_str());
+		z << L"0\n" << oof2.rdbuf();
+		opt = z.str();
+		oof2.close();
+	}
+	remove(outname.c_str());
 	remove(exename.c_str());
-	return output;
+	return opt;
 }
 
 std::string compiler(zskompile zsk) {
@@ -90,7 +133,7 @@ std::string compiler(zskompile zsk) {
 	FILE* comp = _popen(command.c_str(), "r");
 	if (comp == NULL) {
 		remove(cppname.c_str());
-		return u8"Nieznany b³¹d kompilatora";
+		return u8"1\nNieznany b³¹d kompilatora.";
 	}
 	char buffer[1035];
 	bool err = false;
@@ -131,14 +174,13 @@ int main() {
 		std::cout << "Content-Type: text/plain\n\n";
 		zskompile zsk(post());
 		std::string comp = compiler(zsk);
-		wchar_t buffer[1035];
 		std::wstring output = L"";
 		std::wcout << output;
 		if (comp != "OK") {
-			std::cout << u8"B³¹d kompilacji:\n" << comp;
+			std::cout << u8"1\n" << comp;
 			return 0;
 		}
-		std::wcout << u8"Wynik dzia³ania programu:\n" << exe(zsk);
+		std::wcout << exe(zsk);
 		return 0;
 	}
 }

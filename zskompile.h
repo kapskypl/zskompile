@@ -5,6 +5,9 @@
 #include <codecvt>
 #include <vector>
 #include <fstream>
+#include <chrono>
+#include <future>
+
 
 class zskompile {
 	public:
