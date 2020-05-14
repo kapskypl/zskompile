@@ -61,6 +61,7 @@ void run(std::wstring command) {
 }
 
 std::wstring exe(zskompile zsk) {
+	DWORD d1 = GetTickCount();
 	std::wostringstream woss;
 	std::string outname = zsk.getname() + ".out";
 	std::string exename = zsk.getname() + ".exe";
@@ -113,7 +114,7 @@ std::wstring exe(zskompile zsk) {
 	else {
 		std::wstringstream z;
 		std::wifstream oof2(outname.c_str());
-		z << L"0\n" << oof2.rdbuf();
+		z << L"0\n" << std::to_wstring(GetTickCount()-d1) << L"\n" << oof2.rdbuf();
 		opt = z.str();
 		oof2.close();
 	}
