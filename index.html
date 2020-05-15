@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Kompilator C++ Online</title>
+        <meta charset="utf-8">
+		<link rel="icon" href="https://i.ibb.co/37P9yf8/title.png"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300&display=swap">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body class="bg">
+        <div id="wrapper" class="bg">
+            <div id="header" class="bg">
+                <p class="headerText">Kompilator C++ Online</p>
+            </div>
+            <div id="menu" class="bg">
+                <div class="mode off" onclick="mode()">
+                    <img class="img" src="https://i.ibb.co/sWCTKCj/off.png">
+                </div>
+            </div>
+            <div id="input">
+                <div id="inputHeader" class="bg">
+                    <p class="inputText">input</p>
+                    <button id="run">Uruchom</button>
+                </div>
+                <div id="inputWrapper" class="bg">
+                    <textarea id="inputCode" class="bg" onkeydown="insertTab(this, event);" placeholder="Hello World!"></textarea>
+                    <p class="stdin">stdin</p>
+                    <textarea id="inputData" class="bg" onkeydown="insertTab(this, event);"></textarea>
+                </div>
+            </div>
+            <div id="output" class="bg">
+                <p id="outputText">output</p>
+                <p id="outputCode" style="white-space: pre-wrap;"></p>
+            </div>
+            <div id="footer" class="bg">&copy;Jakub Marciniak, Dawid Pieczyński</div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
