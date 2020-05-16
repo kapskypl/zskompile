@@ -7,8 +7,6 @@
 #include <fstream>
 #include <chrono>
 #include <future>
-#include <Windows.h>
-
 
 class zskompile {
 	public:
