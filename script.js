@@ -24,7 +24,7 @@ function mode() {
 
 run.addEventListener("click", () => {
     var a = new XMLHttpRequest();
-    a.open("POST", "XD.cgi", true);
+    a.open("POST", "?", true);
     a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     a.onreadystatechange = function() {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
